@@ -6,17 +6,17 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 //Creates the app
 app.use(bodyParser.json()); //tells body-parser to use json data
-app.use(cors());//allows app to handle cross-origin resource sharing
+app.use(cors()); //allows app to handle cross-origin resource sharing
 //Allows know to use public folder's contents, ex. CSS, HTML etc
 app.use(express.static(__dirname + "/public"));
 //Database entry
-app.get("/new:urlToShorten(*)", (req, res) =>{
-    let { urlToShorten} = req.params;
+app.get("/new:urlToShorten(*)", (req, res) => {
+    let { urlToShorten } = req.params;
     console.log(urlToShorten);
 });
 
-app.get("/new:urlToShorten(*)", (req, res) =>{
-    
+app.get("/new:urlToShorten(*)", (req, res) => {
+
 });
 
 

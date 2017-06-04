@@ -6,6 +6,11 @@ h3 {
     text-align: center;
 }
 
-#input {
-    margin-left: 41.5%;
+.form-inline {
+    display: block;
+}
+
+ul {
+    margin-left: 10%;
+    justify-content: center;
 }
