@@ -4,10 +4,10 @@ const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const structure = require('./models/structure');
+const shortUrl = require('./models/shortUrl');
 
 //Connection to database
-mongoose.connect(process.env.MONGODB_URL || "mongodb://localhost/structures");
+mongoose.connect(process.env.MONGODB_URL || "mongodb://localhost/shortUrls");
 
 //Creates the app
 app.use(bodyParser.json()); //tells body-parser to use json data
@@ -17,23 +17,30 @@ app.use(cors()); //allows app to handle cross-origin resource sharing
 app.use(express.static(__dirname + "/public"));
 
 //Database entry
-app.get("/new:userUrl(*)", (req, res) => {
+app.get("/new/:userUrl(*)", (req, res) => {
     let { userUrl } = req.params;
     console.log(userUrl);
+    let urlCheck = /((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z0-9\&\.\/\?\:@\-_=#])*/g;
+
+    let checkedUrl = urlCheck;
+
+    if (checkedUrl.test(userUrl) === true) {
+        console.log('Success');
+        var shortId = Math.floor(Math.random()* 10000);
+
+        let data = new shortUrl(
+            {
+                userUrl: userUrl,
+                shorterUrl: shortId
+            }
+        );
+        data.save();
+        return res.json(data);
+    } else {
+        console.log('Fail');
+        return res.json({ userUrl: userUrl + ' is not a valid URL, try again' });
+    }
 });
-
-app.get("/new:userUrl(*)", (req, res) => {
-
-});
-
-
-
-
-
-
-
-
-
 
 
 //Listen on connection port
