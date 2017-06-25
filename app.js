@@ -6,10 +6,14 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const shortUrl = require('./models/shortUrl');
 var dotenv = require("dotenv").config();
+var shortid = require('shortid');
+var randomstring = require("randomstring");
+
+
+
 
 //Connection to database
 let dbUrl = process.env.MONGOLAB_URI;
-
 mongoose.connect(dbUrl);  
 
 //Creates the app
@@ -29,8 +33,8 @@ app.get("/new/:userUrl(*)", (req, res) => {
     
     if (checkedUrl.test(userUrl) === true) {
         console.log('Success');
-        var shortId = Math.floor(Math.random()* 10000);
-
+        var shortId = randomstring.generate(6);
+        console.log(shortId);
         let dbEntry = new shortUrl(
             {
                 userUrl: userUrl,
@@ -44,6 +48,14 @@ app.get("/new/:userUrl(*)", (req, res) => {
         console.log('Invalid Url');
         return res.json({ userUrl: userUrl + ' is not a valid URL, try again' });
     }
+});
+
+app.get("/api/shorturl/:idURL", function(req, res) {
+  URL.findOne({
+    short_url: req.params.idURL
+  }, function(err, doc) {
+    return doc ? res.redirect("https://" + doc.original_url) : res.send("ID is not correct");
+  });
 });
 
 
