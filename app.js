@@ -23,11 +23,7 @@ app.use(express.static(__dirname + "/public"));
 app.get("/new/:userUrl(*)", (req, res) => {
     let { userUrl } = req.params; //returns parameters in the matched route.
     
-<<<<<<< HEAD
-     //Regex for checking proper URL format.
-=======
     //Regex for checking proper URL format.
->>>>>>> 9c48ba9d30663271b0b36923ca44030f08d9e4b0
     let urlCheck = /((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z0-9\&\.\/\?\:@\-_=#])*/g;
     let checkedUrl = urlCheck;
     
