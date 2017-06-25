@@ -5,21 +5,25 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const shortUrl = require('./models/shortUrl');
+var dotenv = require("dotenv").config();
 
 //Connection to database
-mongoose.connect(process.env.MONGODB_URL || "mongodb://localhost/shortUrls");
+let dbUrl = process.env.MONGOLAB_URI;
+
+mongoose.connect(dbUrl);  
 
 //Creates the app
 app.use(bodyParser.json()); //tells body-parser to use json data
 app.use(cors()); //allows app to handle cross-origin resource sharing
 
-//Allows know to use public folder's contents, ex. CSS, HTML etc
+//Allows Node to use public folder's contents, ex. CSS, HTML etc
 app.use(express.static(__dirname + "/public"));
 
 //Database entry
 app.get("/new/:userUrl(*)", (req, res) => {
-    let { userUrl } = req.params;
-    console.log(userUrl);
+    let { userUrl } = req.params; //returns parameters in the matched route.
+    
+    //variable to compare the URL the user entered to, for proper URL format.
     let urlCheck = /((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z0-9\&\.\/\?\:@\-_=#])*/g;
 
     let checkedUrl = urlCheck;
@@ -28,16 +32,17 @@ app.get("/new/:userUrl(*)", (req, res) => {
         console.log('Success');
         var shortId = Math.floor(Math.random()* 10000);
 
-        let data = new shortUrl(
+        let dbEntry = new shortUrl(
             {
                 userUrl: userUrl,
                 shorterUrl: shortId
             }
         );
-        data.save();
-        return res.json(data);
+        
+        dbEntry.save();
+        return res.json(dbEntry);
     } else {
-        console.log('Fail');
+        console.log('Invalid Url');
         return res.json({ userUrl: userUrl + ' is not a valid URL, try again' });
     }
 });
@@ -45,6 +50,6 @@ app.get("/new/:userUrl(*)", (req, res) => {
 
 //Listen on connection port
 let port = process.env.PORT || 3000;
-app.listen(port || 3000, () => {
+app.listen(port, () => {
     console.log("Listening on port: " + port);
 });
