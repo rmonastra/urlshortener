@@ -34,10 +34,10 @@ app.get("/new/:userUrl(*)", (req, res) => {
     if (checkedUrl.test(userUrl) === true) {
         console.log('Success');
         var shortId = randomstring.generate(6);
-        console.log(shortId);
+        //console.log(shortId);
         let dbEntry = new shortUrl(
             {
-                userUrl: userUrl,
+                originalUrl: userUrl,
                 shorterUrl: shortId
             }
         );
@@ -50,11 +50,20 @@ app.get("/new/:userUrl(*)", (req, res) => {
     }
 });
 
-app.get("/api/shorturl/:idURL", function(req, res) {
-  URL.findOne({
-    short_url: req.params.idURL
-  }, function(err, doc) {
-    return doc ? res.redirect("https://" + doc.original_url) : res.send("ID is not correct");
+//Check database
+app.get("/:userUrl", (req, res) => {
+
+   let findUrl = req.params.userUrl;
+
+  shortUrl.findOne({'shorterUrl': findUrl}, (dbEntry) =>{
+      let regexCheck = new RegExp('^(http|https)://', 'i');
+      let urlToCheck = dbEntry.originalUrl;
+
+     if(regexCheck.test(urlToCheck)){
+         res.redirect(301, dbEntry.originalUrl);
+     }else{
+         res.redirect(301, 'http://' + dbEntry.originalUrl);
+     }
   });
 });
 
